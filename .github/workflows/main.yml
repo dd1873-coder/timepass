@@ -64,7 +64,7 @@ jobs:
         flet build web --base-url ${GITHUB_REPOSITORY#*/} --route-url-strategy hash
 
     - name: Upload Artifact
-      uses: actions/upload-pages-artifact@v3
+      uses: actions/upload-pages-artifact@v2
       with:
         name: web-build-artifact  # the name of the artifact
         path: build/web
