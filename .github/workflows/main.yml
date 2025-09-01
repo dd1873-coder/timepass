@@ -5,7 +5,6 @@ on:
     branches: [main]
 
 permissions:
-  contents: read
   pages: write
   id-token: write
 
@@ -16,21 +15,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
-      
-      - name: Create basic site if needed
+      - name: Create index.html if missing
         run: |
           if [ ! -f "index.html" ]; then
-            echo '<!DOCTYPE html><html><head><title>My GitHub Page</title></head><body><h1>Hello World!</h1><p>My GitHub Pages site is working.</p></body></html>' > index.html
+            echo '<!DOCTYPE html><html><head><title>My Site</title></head><body><h1>Hello GitHub Pages!</h1></body></html>' > index.html
           fi
       
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3
         with:
           path: '.'
-          # Use this if you want to deploy from a specific directory:
-          # path: './docs' 
 
   deploy:
     environment:
@@ -41,4 +35,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4
