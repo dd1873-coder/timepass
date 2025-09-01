@@ -1,18 +1,37 @@
-name: Deploy Flet App
-on: [push]
+name: Deploy Flask App to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
       with:
         python-version: '3.11'
-    - run: pip install flet
-    - run: flet build web
-    - uses: actions/upload-pages-artifact@v3
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flask flask-sqlalchemy werkzeug flask-migrate
+        
+    - name: Build static files (if any)
+      run: |
+        # This would typically involve collecting static files if you had any
+        mkdir -p build/static
+        # Copy your HTML templates to the build directory
+        cp -r templates build/ || true
+        
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
       with:
-        path: build/web
+        path: build/
+
   deploy:
     needs: build
     permissions:
@@ -23,4 +42,5 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/deploy-pages@v4
+    - name: Deploy to GitHub Pages
+      uses: actions/deploy-pages@v4
