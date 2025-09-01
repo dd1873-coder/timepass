@@ -4,6 +4,11 @@ on:
   push:
     branches: [ main ]
 
+# Add concurrency control to prevent multiple simultaneous deployments
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -20,9 +25,8 @@ jobs:
         python -m pip install --upgrade pip
         pip install flask flask-sqlalchemy werkzeug flask-migrate
         
-    - name: Build static files (if any)
+    - name: Build static files
       run: |
-        # This would typically involve collecting static files if you had any
         mkdir -p build/static
         # Copy your HTML templates to the build directory
         cp -r templates build/ || true
