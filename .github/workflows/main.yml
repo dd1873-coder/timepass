@@ -1,50 +1,44 @@
-name: Deploy Flask App to GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
-# Add concurrency control to prevent multiple simultaneous deployments
-concurrency:
-  group: "pages"
-  cancel-in-progress: true
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-        
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install flask flask-sqlalchemy werkzeug flask-migrat
-        
-    - name: Build static files
-      run: |
-        mkdir -p build/static
-        # Copy your HTML templates to the build directory
-        cp -r templates build/ || true
-        
-    - name: Upload artifact
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: build/
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+      
+      - name: Create basic site if needed
+        run: |
+          if [ ! -f "index.html" ]; then
+            echo '<!DOCTYPE html><html><head><title>My GitHub Page</title></head><body><h1>Hello World!</h1><p>My GitHub Pages site is working.</p></body></html>' > index.html
+          fi
+      
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: '.'
+          # Use this if you want to deploy from a specific directory:
+          # path: './docs' 
 
   deploy:
-    needs: build
-    permissions:
-      pages: write
-      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    needs: build
     steps:
-    - name: Deploy to GitHub Pages
-      uses: actions/deploy-pages@v4
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
