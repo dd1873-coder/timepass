@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h2>Admin Dashboard</h2>
+    <div class="dashboard-actions">
+        <a href="{{ url_for('create_user') }}" class="btn btn-primary">Create New User</a>
+        <a href="{{ url_for('mark_attendance') }}" class="btn btn-secondary">Mark Attendance</a>
+    </div>
+</div>
+
+<div class="dashboard-section">
+    <h3>Today's Attendance</h3>
+    {% if attendance %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Status</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in attendance %}
+                    <tr>
+                        <td>{{ record.username }}</td>
+                        <td><span class="status-{{ record.status }}">{{ record.status }}</span></td>
+                        <td>{{ record.timestamp }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No attendance records for today.</p>
+    {% endif %}
+</div>
+
+<div class="dashboard-section">
+    <h3>All Users</h3>
+    {% if users %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Role</th>
+                    <th>Created At</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.role }}</td>
+                        <td>{{ user.created_at }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No users found.</p>
+    {% endif %}
+</div>
+{% endblock %}
