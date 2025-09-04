@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Mark Attendance{% endblock %}
+
+{% block content %}
+<div class="attendance-container">
+    <h2>Mark Attendance</h2>
+    
+    <div class="attendance-form-section">
+        <h3>Mark Attendance for User</h3>
+        <form method="POST" class="attendance-form">
+            <div class="form-group">
+                <label for="user_id">Select User:</label>
+                <select id="user_id" name="user_id" required>
+                    {% for user in users %}
+                        <option value="{{ user.id }}">{{ user.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="status">Status:</label>
+                <select id="status" name="status" required>
+                    <option value="present">Present</option>
+                    <option value="absent">Absent</option>
+                    <option value="late">Late</option>
+                    <option value="leave">Leave</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="date">Date (default: today):</label>
+                <input type="date" id="date" name="date" value="{{ date.today().isoformat() }}">
+            </div>
+            <button type="submit" class="btn btn-primary">Mark Attendance</button>
+        </form>
+    </div>
+    
+    <div class="attendance-list-section">
+        <h3>Today's Attendance Records</h3>
+        {% if attendance %}
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in attendance %}
+                        <tr>
+                            <td>{{ record.username }}</td>
+                            <td><span class="status-{{ record.status }}">{{ record.status }}</span></td>
+                            <td>{{ record.date }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No attendance records for today yet.</p>
+        {% endif %}
+    </div>
+    
+    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+</div>
+{% endblock %}
